@@ -16,9 +16,11 @@ const Register = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
+    try 
+    {
       await register(formData);
       setSuccessMessage("Registration successful! You can now log in.");
       setErrorMessage("");

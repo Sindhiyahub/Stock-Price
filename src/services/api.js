@@ -5,7 +5,9 @@ const API_URL = 'http://localhost:8080/api/auth';  // Make sure this is correct 
 // Login function to authenticate user and return JWT token
 export const login = async ({ username, password }) => {
   const response = await axios.post(`${API_URL}/login`, { username, password });
-  return response;  // Assuming the API returns a token
+  const token = response.data.token;  // Assuming the token is in the response data
+  localStorage.setItem('authToken', token);  // Store token in localStorage
+  return response;
 };
 
 // Register function to register a new user
@@ -14,18 +16,34 @@ export const register = async ({ username, password }) => {
   return response;  // This might be the user object or a success message
 };
 
-// You can also add other API functions like buyStock, sellStock here if needed
-// Example for buyStock and sellStock:
+// Buy Stock Function
 export const buyStock = async (orderRequest) => {
-  // Implement buyStock functionality here
-  // For example:
-  const response = await axios.post('http://localhost:8080/api/orders/buy', orderRequest);
+  const jwtToken = localStorage.getItem('authToken');
+  if (!jwtToken) {
+    throw new Error('User not authenticated. Please log in.');
+  }
+
+  const response = await axios.post('http://localhost:8080/api/orders/buy', orderRequest, {
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+    },
+  });
+
   return response.data;
 };
 
+// Sell Stock Function
 export const sellStock = async (orderRequest) => {
-  // Implement sellStock functionality here
-  // For example:
-  const response = await axios.post('http://localhost:8080/api/orders/sell', orderRequest);
+  const jwtToken = localStorage.getItem('authToken');
+  if (!jwtToken) {
+    throw new Error('User not authenticated. Please log in.');
+  }
+
+  const response = await axios.post('http://localhost:8080/api/orders/sell', orderRequest, {
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+    },
+  });
+
   return response.data;
 };
